@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="scroll-smooth dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ahmed Maher</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/feather-icons"></script>
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+
+  <style>
+    body { 
+      font-family: 'Cairo', sans-serif; 
+      overflow-x: hidden; 
+      background: #0a0a0a;
+      color: #f5f5f5;
+    }
+    h1,h2,h3,h4 { font-family: 'Poppins', sans-serif; }
+
+    /* Canvas خلفية */
+    #matrixCanvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      background: #0a0a0a;
+    }
+
+    /* دخول السيكشن */
+    .fade-in { opacity: 0; transform: translateY(30px); transition: all 0.9s ease; }
+    .fade-in.show { opacity: 1; transform: translateY(0); }
+
+    /* الخط المتحرك تحت العناوين */
+    .section-title {
+      position: relative;
+      display: inline-block;
+      padding-bottom: 8px;
+    }
+    .section-title::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      height: 3px;
+      border-radius: 9999px;
+      background: linear-gradient(90deg, #6366f1, #8b5cf6, #ec4899);
+      background-size: 200% 200%;
+      animation: moveGradient 4s ease infinite;
+    }
+    @keyframes moveGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    /* الكروت صغيرة ومضغوطة */
+    .card { 
+      transition: all 0.3s ease-in-out;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 0.5rem;
+      padding: 0.3rem 0.4rem;
+      backdrop-filter: blur(6px);
+      border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+      height: 110px;          /* ارتفاع أصغر */
+      max-width: 140px;       /* العرض أصغر */
+      margin: 0 auto;         /* توسيط الكارت */
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+    .card h4 { font-size: 0.7rem; margin-bottom: 0.2rem; }
+    .card p { font-size: 0.55rem; text-align: center; }
+    .card i { width: 20px; height: 20px; } /* أيقونة أصغر */
+    .card:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 3px 8px rgba(99,102,241,0.3);
+      border: 1px solid rgba(99,102,241,0.4);
+    }
+
+    /* شبكة الكروت */
+    .cards-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    /* تعديل القائمة المنسدلة */
+    #mobileMenu {
+      background-color: #222233;
+      border-radius: 0.5rem;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    #mobileMenu a {
+      color: #f5f5f5;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      display: block;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    #mobileMenu a:hover {
+      color: #ff9900;
+      transform: scale(1.05);
+    }
+  </style>
+</head>
+
+<body class="bg-black text-gray-100 min-h-screen">
+  
+  <!-- خلفية Canvas -->
+  <canvas id="matrixCanvas"></canvas>
+
+  <!-- Navbar -->
+  <header class="fixed w-full bg-gradient-to-r from-purple-900/80 via-black/80 to-blue-900/80 backdrop-blur-md shadow-lg z-50">
+    <div class="container mx-auto flex justify-between items-center p-4">
+      <h1 class="text-3xl md:text-4xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-500">
+        Ahmed Maher
+      </h1>
+      <nav class="hidden md:flex gap-6 font-semibold">
+        <a href="#hero" class="hover:text-blue-400">Home</a>
+        <a href="#services" class="hover:text-blue-400">Services</a>
+        <a href="#contact" class="hover:text-blue-400">Contact</a>
+      </nav>
+      <button id="menuToggle" class="md:hidden p-2 rounded-lg hover:bg-gray-800">
+        <i data-feather="menu"></i>
+      </button>
+    </div>
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="hidden flex-col items-center shadow-lg p-2 space-y-2 md:hidden">
+      <a href="#hero">Home</a>
+      <a href="#services">Services</a>
+      <a href="#contact">Contact</a>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section id="hero" class="min-h-screen flex items-center justify-center text-center px-4 fade-in">
+    <div>
+      <h2 class="text-5xl md:text-7xl font-extrabold mb-4 bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        Welcome to My World
+      </h2>
+      <p class="text-lg md:text-xl mb-6">Where Creativity Meets Technology 🚀</p>
+      <a href="#services" class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full shadow-lg hover:scale-110 transition transform">Explore Services</a>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="py-20 fade-in">
+    <div class="container mx-auto text-center">
+      <h3 class="text-4xl font-bold mb-12 section-title">My Services</h3>
+      <div class="cards-grid">
+
+        <div class="card">
+          <i data-feather="monitor" class="mb-1 text-blue-400"></i>
+          <h4>Web Design</h4>
+          <p>Modern, responsive websites.</p>
+        </div>
+
+        <div class="card">
+          <i data-feather="code" class="mb-1 text-green-400"></i>
+          <h4>Back-End</h4>
+          <p>Scalable secure systems.</p>
+        </div>
+
+        <div class="card">
+          <i data-feather="smartphone" class="mb-1 text-purple-400"></i>
+          <h4>Mobile Apps</h4>
+          <p>Cross-platform smooth apps.</p>
+        </div>
+
+        <div class="card">
+          <i data-feather="pen-tool" class="mb-1 text-pink-400"></i>
+          <h4>Graphic Design</h4>
+          <p>Creative visuals & stories.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-20 fade-in">
+    <div class="container mx-auto text-center">
+      <h3 class="text-4xl font-bold mb-6 section-title">Contact</h3>
+      <p class="mb-6">Always here to collaborate and create something amazing.</p>
+      <a href="mailto:info@ahmedmaher.com" class="px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-500 text-white rounded-full shadow-lg hover:scale-110 transition transform">Contact Me</a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-black py-6 mt-10 relative z-20">
+    <div class="container mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-sm">&copy; 2025 Ahmed Maher - All Rights Reserved</p>
+      <div class="flex gap-6 text-xl">
+        <a href="https://wa.me/201034859313" target="_blank" class="hover:text-green-500"><i data-feather="message-circle"></i></a>
+        <a href="https://t.me/PROAB5" target="_blank" class="hover:text-sky-400"><i data-feather="send"></i></a>
+        <a href="#" class="hover:text-blue-500"><i data-feather="facebook"></i></a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    feather.replace();
+
+    // Mobile Menu toggle with X icon
+    const menuToggle = document.getElementById("menuToggle");
+    const mobileMenu = document.getElementById("mobileMenu");
+    let menuOpen = false;
+
+    menuToggle.addEventListener("click", () => {
+      mobileMenu.classList.toggle("hidden");
+      mobileMenu.classList.toggle("flex");
+      menuOpen = !menuOpen;
+      menuToggle.innerHTML = menuOpen ? feather.icons.x.toSvg() : feather.icons.menu.toSvg();
+    });
+
+    // Fade-in Animation
+    const fadeElements = document.querySelectorAll(".fade-in");
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) entry.target.classList.add("show");
+      });
+    }, { threshold: 0.2 });
+    fadeElements.forEach(el => observer.observe(el));
+
+    // Matrix Background
+    const canvas = document.getElementById("matrixCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+
+    const letters = "01<>[]{}/#=+";
+    const fontSize = 14;
+    let columns = canvas.width / fontSize;
+    const drops = Array(Math.floor(columns)).fill(1);
+
+    function draw() {
+      ctx.fillStyle = "rgba(0,0,0,0.1)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#00ff99";
+      ctx.font = fontSize + "px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = letters[Math.floor(Math.random() * letters.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+        if(drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    setInterval(draw, 50);
+
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      columns = canvas.width / fontSize;
+      drops.length = Math.floor(columns);
+      drops.fill(1);
+    });
+  </script>
+</body>
+</html>
